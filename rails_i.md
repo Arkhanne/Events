@@ -1,8 +1,14 @@
 # Ruby on Rails: Level I
 
+## Development Environment
+
+```shell
+rails c
+```
+
 ## Create the App
 
-```bash
+```shell
 rvm gemset use --create 2.5.1@events
 rvm gemset list
 gem install rails
@@ -14,7 +20,7 @@ echo events > .ruby-gemset
 
 ### To lauch the server (localhost:3000)
 
-```bash
+```shell
 rails s
 ```
 
@@ -74,7 +80,7 @@ Rails.application.routes.draw do
 end
 ```
 
-```bash
+```shell
 rails g controller events
 ```
 
@@ -109,3 +115,113 @@ Listing generated at <%= @time %>
 # runs the Ruby code but does not substitute result into template
 <%            %>
 ```
+
+## Models
+
+```shell
+rails g model event name:string location:string price:decimal
+```
+
+```ruby
+# 20181113142542_create_events.rb
+class CreateEvents < ActiveRecord::Migration[5.2]
+  def change
+    create_table :events do |t|
+      t.string :name
+      t.string :location
+      t.decimal :price
+
+      t.timestamps
+    end
+  end
+end
+```
+
+```ruby
+# event.rb
+class Event < ApplicationRecord
+end
+```
+
+```shell
+(to create the tables)
+rails db:migrate
+
+rails db:migrate:status
+```
+
+```shell
+>> Event.conection
+>> Event
+=> Event(id: integer, name: string, location: string, price: decimal, created_at: datetime, updated_at: datetime)
+>> e = Event.new
+>> e.name
+=> nil
+>> e.name = "BugSmash"
+>> e.location = "Denver, CO"
+>> e.price = 0.00
+>> e
+=> #<Event id: nil, name: "BugSmash", location: "Denver, CO", price: 0.0, created_at: nil, updated_at: nil>
+>> e.save
+```
+
+```shell
+>> e = Event.new(name: "hackathon", location: "Austin, TX", price: 15.00)
+>> e.save
+```
+
+```shell
+e = Event.create(name: "Kata Camp", location: "Dallas, TX", price: 75.00)
+```
+
+```shell
+>> Event.count
+=> 3
+>> Event.all
+>> e = Event.first
+>> e = Event.last
+```
+
+```shell
+>> e = Event.find(3)
+>> e.name
+=> "Kata Camp"
+>> e.name = "Kata Camp 2013"
+=> "Kata Camp 2013"
+>> e.price = 50.00
+=> 50.0
+>> e.save
+```
+
+```shell
+>> e = Event.find_by(name: "Kata Camp 2013")
+>> e.update(name: "Kata Camp", price: 75.00)
+>> e.price.to_s
+=> "75.0"
+```
+
+```shell
+>> e = Event.find(1)
+>> e.destroy
+```
+
+### List of supported database column types
+
+* string
+* text
+* integer
+* decimal
+* float
+* boolean
+* binary
+* date
+* time
+* datetime
+* primary_key
+* timestamp
+
+### To see all the database-related tasks at your disposal
+
+ ```shell
+ rails -T db
+ ```
