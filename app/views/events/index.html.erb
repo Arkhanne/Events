@@ -3,6 +3,10 @@
 Listing generated at <%= @time %>
 <ul>
   <% @events.each do |event| %>
-    <li><%= event %></li>
+    <li>
+      <strong><%= event.name %></strong>
+      in <%= event.location %>:
+      <%= number_to_currency(event.price) %>
+    </li>
   <% end %>
 </ul>

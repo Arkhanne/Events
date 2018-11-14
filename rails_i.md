@@ -225,3 +225,7 @@ e = Event.create(name: "Kata Camp", location: "Dallas, TX", price: 75.00)
  ```shell
  rails -T db
  ```
+
+## Connecting MVC
+
+![MPV](app/assets/images/MVP.png)
