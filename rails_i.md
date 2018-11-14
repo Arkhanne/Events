@@ -229,3 +229,10 @@ e = Event.create(name: "Kata Camp", location: "Dallas, TX", price: 75.00)
 ## Connecting MVC
 
 ![MPV](app/assets/images/MVP.png)
+
+## Migrations
+
+```shell
+rails g migration AddFieldsToEvents starts_at:datetime description:text
+rails db:migrate
+```
