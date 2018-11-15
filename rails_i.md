@@ -236,3 +236,63 @@ e = Event.create(name: "Kata Camp", location: "Dallas, TX", price: 75.00)
 rails g migration AddFieldsToEvents starts_at:datetime description:text
 rails db:migrate
 ```
+
+## Helpers
+
+```shell
+>> helper.number_to_currency(1234567890.50)
+=> "$1,234,567,890.50"
+>> helper.pluralize(0, 'event')
+=> "0 events"
+>> helper.pluralize(1, 'event')
+=> "1 event"
+>> helper.pluralize(2, 'event')
+=> "2 events"
+```
+
+```ruby
+<tr>
+  <th>Price:</th>
+  <% if event.price == 0 %>
+    <td>Free</td>
+  <% else %>
+    <td><%= number_to_currency(event.price) %></td>
+  <% end %>
+</tr>
+
+# We can use a method:
+<tr>
+  <th>Price:</th>
+  <td><%= format_price(event) %></td>
+</tr>
+
+# Then, in the events_helper.rb file:
+module EventsHelper
+  def format_price(event)
+    if event.price.zero?
+      '<strong>Free!</strong>'.html_safe
+    else
+      number_to_currency(event.price)
+    end
+  end
+end
+
+# Also we can change the condition
+module EventsHelper
+  def format_price(event)
+    if event.free?
+      content_tag(:strong, 'Free!')
+    else
+      number_to_currency(event.price)
+    end
+  end
+end
+
+# And then, in the event.rb file:
+class Event < ApplicationRecord
+  def free?
+    proce.blank? || price.zero?
+  end
+end
+
+```

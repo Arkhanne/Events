@@ -1,4 +1,4 @@
-<h1><%= @events.size %> Events</h1>
+<h1><%= pluralize(@events.size, 'Event') %></h1>
 
 <% @events.each do |event| %>
   <article>
@@ -6,7 +6,7 @@
       <h2><%= event.name %></h2>
     </header>
     <p>
-      <%= event.description%>
+      <%= truncate(event.description, length: 25, separation: ' ') %>
     </p>
     <table>
       <tr>
@@ -19,7 +19,7 @@
       </tr>
       <tr>
         <th>Price:</th>
-        <td><%= number_to_currency(event.price) %></td>
+        <td><%= format_price(event) %></td>
       </tr>
     </table>
   </article>
