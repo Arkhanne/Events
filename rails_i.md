@@ -339,3 +339,34 @@ end
   </p>
 </article>
 ```
+
+## Routes: Linking Pages
+
+### To show all the routes
+
+![MPV](app/assets/images/routes.png)
+
+```shell
+rails routes
+
+http://localhost:3000/rails/info/routes
+```
+
+```erb
+<%= link_to "All Events", "/events" %>
+
+<%= link_to "All Events", events_path %>
+```
+
+```ruby
+# routes.rb
+Rails.application.routes.draw do
+  get 'events' => 'events#index'
+  get 'events/:id' => 'events#show', as: 'event'
+end
+
+# index.html.erb
+<h2><%= link_to(event.name, event) %></h2>
+# or
+
+```
