@@ -296,3 +296,46 @@ class Event < ApplicationRecord
 end
 
 ```
+
+## Routes: Show Page
+
+```ruby
+# routes.rb
+Rails.application.routes.draw do
+  get 'events' => 'events#index'
+  get 'events/:id' => 'events#show'
+end
+
+#events_controler.rb
+class EventsController < ApplicationController
+  def index
+    @events = Event.all
+  end
+
+  def show
+    @event = Event.find(params[:id])
+  end
+end
+
+#show.html.erb
+<article>
+  <header>
+    <h2><%= @event.name %></h2>
+  </header>
+  <p>
+    <%= @event.description %>
+  </p>
+  <h3>When</h3>
+  <p>
+    <%= @event.starts_at %>
+  </p>
+  <h3>Where</h3>
+  <p>
+    <%= @event.location %>
+  </p>
+  <h3>Price</h3>
+  <p>
+    <%= format_price(@event) %>
+  </p>
+</article>
+```
