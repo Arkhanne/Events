@@ -370,3 +370,84 @@ end
 # or
 
 ```
+
+## Forms: Editing Part I
+
+```ruby
+# routes.rb
+Rails.application.routes.draw do
+  root 'events#index'
+  get 'events' => 'events#index'
+  get 'events/:id' => 'events#show', as: 'event'
+  get 'events/:id/edit' => 'events#edit', as: 'edit_event'
+end
+
+# show.html.erb
+<article>
+  <header>
+    <h2><%= @event.name %></h2>
+  </header>
+  <p>
+    <%= @event.description %>
+  </p>
+  <h3>When</h3>
+  <p>
+    <%= @event.starts_at %>
+  </p>
+  <h3>Where</h3>
+  <p>
+    <%= @event.location %>
+  </p>
+  <h3>Price</h3>
+  <p>
+    <%= format_price(@event) %>
+  </p>
+</article>
+
+<%= link_to "All Events", root_path %>
+<%= link_to "Edit", edit_event_path(@event) %>
+
+# events_controller
+class EventsController < ApplicationController
+  def index
+    @events = Event.all
+  end
+
+  def show
+    @event = Event.find(params[:id])
+  end
+
+  def edit
+    @event = Event.find(params[:id])
+  end
+end
+
+# edit.html.erb
+<h1>Editing <%= @event.name %></h1>
+
+<%= form_for(@event) do |f| %>
+  <p>
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :description %></br>
+    <%= f.text_area :description, cols: 40, rows: 7 %>
+  </p>
+  <p>
+    <%= f.label :location %><br/>
+    <%= f.text_field :location %>
+  </p>
+  <p>
+    <%= f.label :price %><br/>
+    <%= f.number_field :price %>
+  </p>
+  <p>
+    <%= f.label :starts_at %><br/>
+    <%= f.datetime_select :starts_at %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+```
