@@ -560,3 +560,19 @@ end
 
 <%= render 'form' %>
 ```
+
+## Destroy
+
+```erb
+# show.tml.erb
+<%= link_to "Delete", event_path(@event), method: :delete, data: {confirm: 'Are you sure?'} %>
+```
+
+```ruby
+# events_controller
+def destroy
+  @event = Event.find(params[:id])
+  @event.destroy
+  redirect_to events_url
+end
+```
