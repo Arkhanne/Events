@@ -526,7 +526,7 @@ end
 
 ## Partials
 
-```html
+```erb
 # _form.html.erb
 <%= form_for(@event) do |f| %>
   <p>
@@ -574,5 +574,19 @@ def destroy
   @event = Event.find(params[:id])
   @event.destroy
   redirect_to events_url
+end
+```
+
+## Custom Queries
+
+```ruby
+# events_controller.rb
+def index
+  @events = Event.upcoming
+end
+
+# event.rb
+def self.upcoming
+  where("starts_at >= ?", Time.now).order("starts_at")
 end
 ```
