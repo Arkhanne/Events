@@ -451,3 +451,38 @@ end
   </p>
 <% end %>
 ```
+
+## Forms: Editing Part II
+
+```ruby
+# routes.rb
+Rails.application.routes.draw do
+  root 'events#index'
+  get 'events' => 'events#index'
+  get 'events/:id' => 'events#show', as: 'event'
+  get 'events/:id/edit' => 'events#edit', as: 'edit_event'
+  patch 'events/:id' => 'events#update'
+end
+
+#events_controller
+class EventsController < ApplicationController
+  def index
+    @events = Event.all
+  end
+
+  def show
+    @event = Event.find(params[:id])
+  end
+
+  def edit
+    @event = Event.find(params[:id])
+  end
+
+  def update
+    @event = Event.find(params[:id])
+    event_params = params.require(:event).permit(:name, :description, :location, :price, :starts_at)
+    @event.update(event_params)
+    redirect_to @event
+  end
+end
+```
