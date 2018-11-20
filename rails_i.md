@@ -523,3 +523,40 @@ end
     params.require(:event).permit(:name, :description, :location, :price, :starts_at)
   end
 ```
+
+## Partials
+
+```html
+# _form.html.erb
+<%= form_for(@event) do |f| %>
+  <p>
+    <%= f.label :name %><br/>
+    <%= f.text_field :name, autofocus: true %>
+  </p>
+  <p>
+    <%= f.label :description %></br>
+    <%= f.text_area :description, cols: 40, rows: 7 %>
+  </p>
+  <p>
+    <%= f.label :location %><br/>
+    <%= f.text_field :location %>
+  </p>
+  <p>
+    <%= f.label :price %><br/>
+    <%= f.number_field :price %>
+  </p>
+  <p>
+    <%= f.label :starts_at %><br/>
+    <%= f.datetime_select :starts_at %>
+  </p>
+  <p>
+    <%= f.submit %> |
+    <%= link_to 'Cancel', events_path %>
+  </p>
+<% end %>
+
+# new.html.erb
+<h1> Add New Event </h1>
+
+<%= render 'form' %>
+```
