@@ -590,3 +590,13 @@ def self.upcoming
   where("starts_at >= ?", Time.now).order("starts_at")
 end
 ```
+
+## Migrations Revisited
+
+```shell
+rails g migration AddImageAndCapacityToEvents image_file:string capacity:integer
+
+rails db:migrate
+
+rails db:rollback
+```
