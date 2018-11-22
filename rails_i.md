@@ -668,5 +668,23 @@ class Event < ApplicationRecord
 end
 ```
 
-## Validations: Part II
+## The Flash
 
+```ruby
+def update
+  @event = Event.find(params[:id])
+  if @event.update(event_params)
+    redirect_to @event, notice: 'Event successfully updated!'
+  else
+    render :edit
+  end
+end
+```
+
+```erb
+<% if flash[:notice] %>
+  <p class="flash notice">
+    <%= flash[:notice] %>
+  </p>
+<% end %>
+```
