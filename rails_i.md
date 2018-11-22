@@ -600,3 +600,70 @@ rails db:migrate
 
 rails db:rollback
 ```
+
+## Validations: Part I
+
+```ruby
+class Event < ApplicationRecord
+  validates :name, presence: true
+
+  def free?
+    price.blank? || price.zero?
+  end
+
+  def self.upcoming
+    where("starts_at >= ?", Time.now).order("starts_at")
+  end
+end
+```
+
+```shell
+> e = Event.new
+ => #<Event id: nil, name: nil, location: nil, price: nil, created_at: nil, updated_at: nil, starts_at: nil, description: nil, image_file_name: "", capacity: 1>
+> e.valid?
+ => false
+> e.errors
+ => #<ActiveModel::Errors:0x00007fc182b93bb0 @base=#<Event id: nil, name: nil, location: nil, price: nil, created_at: nil, updated_at: nil, starts_at: nil, description: nil, image_file_name: "", capacity: 1>, @messages={:name=>["can't be blank"]}, @details={:name=>[{:error=>:blank}]}>
+> e.errors.full_messages
+ => ["Name can't be blank"]
+> e.errors[:name]
+ => ["can't be blank"]
+> e.errors[:description]
+ => []
+> e.save
+   (0.2ms)  begin transaction
+   (0.0ms)  rollback transaction
+ => false
+> e.name = "Event 123"
+ => "Event 123"
+> e.valid?
+ => true
+> e.errors.any?
+ => false
+> e.save
+   (0.7ms)  begin transaction
+  Event Create (1.8ms)  INSERT INTO "events" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Event 123"], ["created_at", "2018-11-22 10:40:27.176098"], ["updated_at", "2018-11-22 10:40:27.176098"]]
+   (0.9ms)  commit transaction
+ => true
+```
+
+```ruby
+class Event < ApplicationRecord
+  validates :name, :location, presence: true
+  validates :description, length: { minimum: 25 }
+  validates :price, numericality: { greater_than_or_equal_to: 0 }
+  validates :capacity, numericality: { only_integer: true, greater_than: 0 }
+  validates :image_file_name, allow_blank: true, format: {
+    with: /\w+\.(gif|jpg|png)\z/i,
+    message: 'must reference a GIF, JPG, or PNG image'
+  }
+
+  def free?
+    price.blank? || price.zero?
+  end
+
+  def self.upcoming
+    where("starts_at >= ?", Time.now).order("starts_at")
+  end
+end
+```
