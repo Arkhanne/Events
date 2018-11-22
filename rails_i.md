@@ -667,3 +667,6 @@ class Event < ApplicationRecord
   end
 end
 ```
+
+## Validations: Part II
+
