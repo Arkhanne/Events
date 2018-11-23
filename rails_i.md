@@ -765,3 +765,6 @@ e = Event.find_by(name: "Kata Camp")
 r = e.registrations.new(name: "Moe", email: "moe@stooges.com")
 r.save
 ```
+
+## One-to-Many: Nested Resources
+

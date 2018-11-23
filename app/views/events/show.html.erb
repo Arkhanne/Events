@@ -22,6 +22,8 @@
   <p>
     <%= pluralize(@event.capacity, 'spot') %>
   </p>
+
+  <%= link_to "Who's Registered?", event_registrations_path(@event) %>
 </article>
 
 <%= link_to "Edit", edit_event_path(@event) %> |
