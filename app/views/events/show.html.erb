@@ -24,6 +24,7 @@
   </p>
 
   <%= link_to "Who's Registered?", event_registrations_path(@event) %>
+  <%= link_to "Register!", new_event_registration_path(@event), class: "button ok register" %>
 </article>
 
 <%= link_to "Edit", edit_event_path(@event) %> |
