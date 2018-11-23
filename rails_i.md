@@ -14,8 +14,8 @@ rvm gemset list
 gem install rails
 rails new events
 cd events
-echo 2.5.1 > .ruby-version
-echo events > .ruby-gemset
+> .ruby-version
+e> .ruby-gemset
 ```
 
 ### To lauch the server (localhost:3000)
@@ -587,7 +587,7 @@ end
 
 # event.rb
 def self.upcoming
-  where("starts_at >= ?", Time.now).order("starts_at")
+  where(>= ?", Time.now).order("starts_at")
 end
 ```
 
@@ -612,7 +612,7 @@ class Event < ApplicationRecord
   end
 
   def self.upcoming
-    where("starts_at >= ?", Time.now).order("starts_at")
+    where(>= ?", Time.now).order("starts_at")
   end
 end
 ```
@@ -663,7 +663,7 @@ class Event < ApplicationRecord
   end
 
   def self.upcoming
-    where("starts_at >= ?", Time.now).order("starts_at")
+    where(>= ?", Time.now).order("starts_at")
   end
 end
 ```
@@ -687,4 +687,81 @@ end
     <%= flash[:notice] %>
   </p>
 <% end %>
+```
+
+## One-toMany: Models
+
+```shell
+rails g resource registration name:string email:string how_heard:string event:references --no-test-framework
+
+rails db:migrate
+
+```
+
+```shell
+> r = Registration.new
+ => #<Registration id: nil, name: nil, email: nil, how_heard: nil, event_id: nil, created_at: nil, updated_at: nil>
+> r.name = "Larry"
+ => "Larry"
+> r.email = "larry@stoogies.com"
+ => "larry@stoogies.com"
+> e = Event.find(1)
+ => #<Event id: 1, name: "BugSmash", location: "Denver, CO", price: 0.5e2, created_at: "2018-11-13 15:21:10", updated_at: "2018-11-21 09:32:25", starts_at: "2019-04-22 12:09:00", description: "A fun eveningog bug smashing!fvbd", image_file_name: "bugsmash.png", capacity: 1>
+> r.event = e
+ => #<Event id: 1, name: "BugSmash", location: "Denver, CO", price: 0.5e2, created_at: "2018-11-13 15:21:10", updated_at: "2018-11-21 09:32:25", starts_at: "2019-04-22 12:09:00", description: "A fun eveningog bug smashing!fvbd", image_file_name: "bugsmash.png", capacity: 1>
+> r
+ => #<Registration id: nil, name: "Larry", email: "larry@stoogies.com", how_heard: nil, event_id: 1, created_at: nil, updated_at: nil>
+> r.save
+ => true
+> r.event
+ => #<Event id: 1, name: "BugSmash", location: "Denver, CO", price: 0.5e2, created_at: "2018-11-13 15:21:10", updated_at: "2018-11-21 09:32:25", starts_at: "2019-04-22 12:09:00", description: "A fun eveningog bug smashing!fvbd", image_file_name: "bugsmash.png", capacity: 1>
+```
+
+```ruby
+# Then is necessary to put "has_many :registrations, dependent: :destroy" in the event model (event.rb)
+class Event < ApplicationRecord
+  validates :name, :location, presence: true
+  validates :description, length: { minimum: 25 }
+  validates :price, numericality: { greater_than_or_equal_to: 0 }
+  validates :capacity, numericality: { only_integer: true, greater_than: 0 }
+  validates :image_file_name, allow_blank: true, format: {
+    with: /\w+\.(gif|jpg|png)\z/i,
+    message: 'must reference a GIF, JPG, or PNG image'
+  }
+
+  has_many :registrations, dependent: :destroy
+
+  def free?
+    price.blank? || price.zero?
+  end
+
+  def self.upcoming
+    where("starts_at >= ?", Time.now).order("starts_at")
+  end
+end
+```
+
+```shell
+> reload!
+ => true
+> e =Event.find(1)
+  Event Load (0.4ms)  SELECT  "events".* FROM "events" WHERE "events"."id" = ? LIMIT ?  [["id", 1], ["LIMIT", 1]]
+ => #<Event id: 1, name: "BugSmash", location: "Denver, CO", price: 0.5e2, created_at: "2018-11-13 15:21:10", updated_at: "2018-11-21 09:32:25", starts_at: "2019-04-22 12:09:00", description: "A fun eveningog bug smashing!fvbd", image_file_name: "bugsmash.png", capacity: 1>
+> e.registrations
+  Registration Load (1.1ms)  SELECT  "registrations".* FROM "registrations" WHERE "registrations"."event_id" = ? LIMIT ?  [["event_id", 1], ["LIMIT", 11]]
+ => #<ActiveRecord::Associations::CollectionProxy [#<Registration id: 1, name: "Larry", email: "larry@stoogies.com", how_heard: nil, event_id: 1, created_at: "2018-11-23 09:01:00", updated_at: "2018-11-23 09:01:00">, #<Registration id: 2, name: "Moe", email: "moe@stoogies.com", how_heard: nil, event_id: 1, created_at: "2018-11-23 09:03:00", updated_at: "2018-11-23 09:03:00">]>
+```
+
+```shell
+e = Event.find_by(name: "BugSmash")
+r = e.registrations.new
+r.name = "Curly"
+r.email = "curly@stooges.com"
+r.save
+```
+
+```shell
+e = Event.find_by(name: "Kata Camp")
+r = e.registrations.new(name: "Moe", email: "moe@stooges.com")
+r.save
 ```
