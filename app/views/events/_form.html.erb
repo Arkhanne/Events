@@ -1,5 +1,5 @@
 <%= form_for(@event) do |f| %>
-  <%= render 'shared/errors, object: @event %>' %>
+  <%= render 'shared/errors', object: @event %>' %>
   <p>
     <%= f.label :name %><br/>
     <%= f.text_field :name, autofocus: true %>

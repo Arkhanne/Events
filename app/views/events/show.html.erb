@@ -24,7 +24,10 @@
   </p>
 
   <%= link_to "Who's Registered?", event_registrations_path(@event) %>
-  <%= link_to "Register!", new_event_registration_path(@event), class: "button ok register" %>
+  <%= register_link(@event) %>
+  <p>
+    (<%= pluralize(@event.spots_left, 'spot') %> available)
+  </p>
 </article>
 
 <%= link_to "Edit", edit_event_path(@event) %> |
